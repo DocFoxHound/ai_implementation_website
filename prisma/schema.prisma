@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  ASSESSMENT_SCHEDULED
+  PROPOSAL_SENT
+  CLOSED_WON
+  CLOSED_LOST
+  NOT_A_FIT
+}
+
+model Lead {
+  id                   String     @id @default(cuid())
+  name                 String
+  businessName         String
+  email                String
+  phone                String?
+  preferredContact     String
+  notes                String?
+  intent               String
+  configurationJson    String
+  recommendedModelJson String
+  hardwareTierJson     String
+  securityTierJson     String
+  addOnsJson           String
+  estimateJson         String
+  status               LeadStatus @default(NEW)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+}
+
+model AiModel {
+  id                           String  @id @default(cuid())
+  name                         String
+  exactModelId                 String  @unique
+  provider                     String
+  license                      String
+  commercialUseAllowed         String
+  releaseDate                  String
+  lastReviewedDate             String
+  modelCategory                String
+  modelType                    String
+  totalParameters              String
+  activeParameters             String
+  contextTokens                Int
+  estimatedContextWords        Int
+  maximumOutputTokens          Int
+  modality                     String
+  strengthsJson                String
+  weaknessesJson               String
+  bestUseCasesJson             String
+  toolCallingSupport           Boolean
+  structuredOutputSupport      Boolean
+  agenticWorkflowSuitability   String
+  codingAbility                String
+  multimodalSupport            Boolean
+  minimumVramGb                Int
+  recommendedVramGb            Int
+  minimumSystemRamGb           Int
+  recommendedSystemRamGb       Int
+  storageRequirementGb         Int
+  supportedRuntimesJson        String
+  offlineCapable               Boolean
+  airGapSuitable               Boolean
+  hardwareCategory             String
+  notes                        String
+  sourceUrl                    String
+  enabled                      Boolean @default(true)
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+}
+
+model HardwareTier {
+  id                       String  @id @default(cuid())
+  slug                     String  @unique
+  tierName                 String
+  customerDescription      String
+  minimumVramGb            Int
+  recommendedVramGb        Int
+  minimumRamGb             Int
+  recommendedRamGb         Int
+  cpuClass                 String
+  storageRecommendation    String
+  gpuExamplesJson          String
+  expectedUsers            String
+  expectedDocumentWorkload String
+  estimatedHardwareCostLow Int
+  estimatedHardwareCostHigh Int
+  notes                    String
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model SecurityTier {
+  id                                    String  @id @default(cuid())
+  slug                                  String  @unique
+  tierName                              String
+  description                           String
+  internetAccessAllowed                 Boolean
+  localProcessingRequired               Boolean
+  airGapRequired                        Boolean
+  auditLoggingRequired                  Boolean
+  roleBasedAccessRequired               Boolean
+  offlineUpdateProcedureRequired        Boolean
+  complianceDocumentationRequired       Boolean
+  estimatedImplementationComplexity     Int
+  costMultiplier                        Float
+  notes                                 String
+  createdAt                             DateTime @default(now())
+  updatedAt                             DateTime @updatedAt
+}
+
+model ToolAddon {
+  id                              String  @id @default(cuid())
+  slug                            String  @unique
+  name                            String
+  description                     String
+  complexity                      String
+  estimatedSetupCostLow           Int
+  estimatedSetupCostHigh          Int
+  monthlySupportImpact            Int
+  requiredSecurityConsiderations  String
+  notes                           String
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+}
+
+model PricingAssumption {
+  id                              String  @id
+  baseInstallationLow             Int
+  baseInstallationHigh            Int
+  customDevelopmentHourlyEstimate Int
+  monthlySupportLow               Int
+  monthlySupportHigh              Int
+  assessmentPrice                 Int
+  foundingCustomerDiscountPercent Int
+  notes                           String
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+}
